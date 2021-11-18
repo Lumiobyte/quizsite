@@ -55,23 +55,34 @@
           </nav>
 
           <div class="alert alert-secondary" role="alert">
-            <h1>Welcome to Cozy Quizzes</h1>
-            <p>On this website you can do quizzes.... see the available quizzes below...</p>
+            <h1>Congratulations on completing <strong>{{ quiz.name }}</strong> quiz!</h1>
+            <p>See your results below</p>
           </div>
 
           <div class="row row-cols-1 row-cols-md-4 g-4" style="padding: 3%;">
-            {% for quiz in quizzes %}
               <div class="col">
-                <div class="card" style="width: 18rem;">
+                <div class="card" style="text-align: left;">
                   <img src="{% if quiz.img is None %}https://i.imgur.com/KA0kTUC.png{% else %}{{ quiz.img }}{% endif %}" h="300" class="card-img-top" alt="quiz thumbnail">
                   <div class="card-body">
-                    <h5 class="card-title"><strong>{{ quiz.name }}</strong></h5>
-                    <p class="card-text">{{ quiz.description }}</p>
-                    <a href="/quizzes/{{ quiz.slug }}" class="btn btn-primary"><i class="fas fa-arrow-right"></i> Play</a>
+                    <h3 class="card-title"><strong><i class="fas fa-star"></i> {{ totalCorrect }}/{{ totalQuestions }} correct!</strong></h3>
+
+                    <ol>
+                    {% for q in correctOrNotCorrect %}
+                      <li><p class="card-text">{{ q |safe }}</p></li>
+                    {% endfor %}
+                    </ol>
+                    
+                    <ul>
+                      <li><p class="card-text"><i class="fas fa-list-ol"></i> {{ totalQuestions }} total questions</p></li>
+                      <li><p class="card-text"><i class="fas fa-check"></i> {{ totalCorrect }} total correct answers</p></li>
+                      <li><p class="card-text"><i class="fas fa-times"></i> {{ totalWrong }} total wrong answers </p></li>
+                      <li><p class="card-text"><strong><i class="fas fa-percentage"></i> {{ percentScore }}% correct!</strong></p></li>
+                    </ul>
+
+                    <a href="/quizzes/" class="btn btn-primary"><i class="fas fa-arrow-left"></i>  Back home</a>
                   </div>
                 </div>
               </div>
-            {% endfor %}
           </div>
     </body>
 </html>

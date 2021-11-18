@@ -23,23 +23,39 @@ def do_quiz(request, slug):
 
     quiz = Quiz.objects.get(slug = slug)
 
-    questions = {"titleimg": quiz.img, "titlename": quiz.name, "titledesc": quiz.description, "questioncount": quiz.num_questions, "questions": {}}
+    if request.method == "POST":
 
-    print(Question.objects.get(quiz = quiz))
+        answers = list(request.POST.values())
+        print(answers)
+        counter = 1
 
-    for question in Question.objects.get(quiz = quiz):
-        questions["questions"][str(question)] = {"img": question.img, "answers": {}}
+        correctOrNotCorrect = []
+        totalCorrect = 0
+        totalWrong = 0
 
-        for choice in Choice.objects.all(question = question):
-            questions["questions"][str(question)]["answers"][str(choice)] = {"correct": choice.correct}
+        for question in Question.objects.filter(quiz = quiz):
+            getOptionMapping = {'0': question.op0, '1': question.op1, '2': question.op2, '3': question.op3}
 
+            if answers[counter] == question.ans:
+                correctOrNotCorrect.append("<strong>{}</strong> was correct!".format(getOptionMapping[question.ans]))
+                totalCorrect += 1
+            else:
+                totalWrong += 1
+                correctOrNotCorrect.append("Incorrect. Correct answer was <strong>{}</strong>".format(getOptionMapping[question.ans]))
 
-    questionsList = []
+            counter += 1
 
-    for question in Question.objects.get(quiz = quiz):
-        questionsList.append(question)
+        print(correctOrNotCorrect)
 
-    return render(request, 'quizzes/do_quiz.html', {"request": request, "quiz": questions, "questionsList": questionsList, "choiceModel": Choice})
+        return render(request, 'quizzes/results.html', {"request": request, "quiz": quiz, "correctOrNotCorrect": correctOrNotCorrect, "totalCorrect": totalCorrect, "totalWrong": totalWrong, "totalQuestions": counter - 1, "percentScore": round(totalCorrect / (counter - 1) * 100, 2)})
+    else:
+        quizInfo = {"titleimg": quiz.img, "titlename": quiz.name, "titledesc": quiz.description, "questioncount": quiz.num_questions}
+
+        questionsList = []
+        for question in Question.objects.filter(quiz = quiz):
+            questionsList.append(question)
+
+        return render(request, 'quizzes/do_quiz.html', {"request": request, "quiz": quizInfo, "questionsList": questionsList, "choiceModel": Choice})
 
 @login_required()
 def create_quiz(request):

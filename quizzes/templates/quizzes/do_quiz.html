@@ -35,18 +35,18 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                    <a class="nav-link" href="/quizzes/home">Home</a>
+                    <a class="nav-link" href="/quizzes/"><i class="fas fa-home"></i> Home</a>
                     </li>
                     {% if request.user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="/quizzes/create">Add quiz</a>
+                        <a class="nav-link" href="/quizzes/create"><i class="fas fa-shield-alt"></i> Add quiz</a>
                       </li>
                       <li class="nav-item">
-                        <a class="nav-link" href="/admin">Admin panel</a>
+                        <a class="nav-link" href="/admin"><i class="fas fa-shield-alt"></i> Admin panel</a>
                       </li>
                     {% else %}
                     <li class="nav-item">
-                    <a class="nav-link" href="../admin">Admin Login</a>
+                    <a class="nav-link" href="../admin"><i class="fas fa-shield-alt"></i> Admin Login</a>
                     </li>
                     {% endif %}
                 </ul>
@@ -56,28 +56,49 @@
 
             <div class="alert alert-secondary" role="alert">
                     <img src="{% if quiz.titleimg is None %}https://i.imgur.com/KA0kTUC.png{% else %}{{ quiz.titleimg }}{% endif %}" alt="quiz title image" height="300">
-                <h1><strong>{{ quiz.titlename }}</strong></h1>
+                <h1><strong><i class="far fa-question-circle"></i> {{ quiz.titlename }}</strong></h1>
                 <p>{{ quiz.titledesc }}</p>
-                <p>{{ quiz.questioncount }} Questions</p>
+                <p><i class="fas fa-info-circle"></i> You can click on images to see a larger version!</p>
+                <p><strong><i class="fas fa-list-ul"></i> {{ quiz.questioncount }} Questions</strong></p>
             </div>
 
-
-            <form>
-              {{% for question in questionsList }}
-                <p>question</p>
-                <p>choiceModel.objects.get(question = question)</p>
-              {{% endfor %}}
-
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                <label class="form-check-label" for="flexRadioDefault1">
-                  Default radio
-                </label>
-              </div>
-
-              
-              <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
-
+            <div style="padding-left: 30px; text-align: left;">
+              <form method='post' action=''>
+                {% csrf_token %}
+                {% for q in questionsList %}
+                <div class="form-group">
+                  <label for="question"><h2><strong>{{ forloop.counter }}. {{q.content}}</strong></h2></label>
+                </div>
+                <a href="{{ q.img }}" target="_blank"><img src="{{ q.img }}" height="200"></a>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="q{{ forloop.counter }}" id="exampleRadios0" value="0" checked>
+                    <label class="form-check-label" for="exampleRadios0">
+                        {{q.op0}}
+                    </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="q{{ forloop.counter }}" id="exampleRadios1" value="1">
+                  <label class="form-check-label" for="exampleRadios1">
+                    {{q.op1}}
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="q{{ forloop.counter }}" id="exampleRadios2" value="2">
+                  <label class="form-check-label" for="exampleRadios2">
+                    {{q.op2}}
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="q{{ forloop.counter }}" id="exampleRadios2" value="3">
+                  <label class="form-check-label" for="exampleRadios3">
+                    {{q.op3}}
+                  </label>
+                </div>
+                <br>
+                {% endfor %}
+                
+                <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Submit</button>
+              </form>
+            </div>
       </body>
 </html>
